@@ -4,6 +4,7 @@ import {FormArray, FormControl, FormGroup, Validators} from "@angular/forms";
 import {Question} from "../../models/question";
 import {QuestionsService} from "../../services/questions";
 import {Answer} from "../../models/answer";
+import {AuthService} from "../../services/auth";
 @Component({
     selector: 'page-question',
     templateUrl: 'question.html'
@@ -24,29 +25,33 @@ export class QuestionPage implements OnInit {
                 private actionSheetController: ActionSheetController,
                 private alertController: AlertController,
                 private toastController: ToastController,
-                private questionsService: QuestionsService) {
-    }
-
-    ionViewDidLoad() {
-
+                private questionsService: QuestionsService,
+                private authService: AuthService) {
     }
 
     ngOnInit() {
-        this.initializeForm();
-
-    }
-
-    ionViewWillEnter() {
         this.mode = this.navParams.get('mode') || 'New';
+        if (this.mode == 'Edit') {
+            this.question = this.navParams.get('question');
+            this.answers = this.question.answers;
+            this.index = this.navParams.get('index');
+        }
 
         this.title = this.getTitleText();
         this.buttonText = this.getButtonText();
+
+        this.initializeForm();
+    }
+
+    ionViewWillEnter() {
     }
 
     private getTitleText() {
         switch (this.mode) {
             case 'New':
                 return `Add a ${this.mode} Quiz Question`;
+            case 'Edit':
+                return `Edit Quiz Question`;
         }
     }
 
@@ -54,6 +59,8 @@ export class QuestionPage implements OnInit {
         switch (this.mode) {
             case 'New':
                 return `Save Question`;
+            case 'Edit':
+                return `Save Changes`;
         }
     }
 
@@ -115,6 +122,7 @@ export class QuestionPage implements OnInit {
     onAddAnswer() {
         this.createNewAnswerAlert().present();
     }
+
     onManageAnswers() {
         const actionSheet = this.actionSheetController.create({
             title: 'What do you want to do?',
@@ -156,11 +164,12 @@ export class QuestionPage implements OnInit {
     onSubmit() {
         const value = this.questionForm.value;
         let answers = [];
-        if (value.answers.length > 0) {
-            answers = value.answers.map(answer => {
+        if (this.answers.length > 0) {
+            answers = this.answers.map(answer => {
                 return {answer: answer.answer, value: answer.value, comment: answer.comment};
             });
         }
+
         if (this.mode == 'Edit') {
             this.questionsService.updateQuestion(this.index, value.question, value.weight, answers);
         } else {
@@ -177,8 +186,12 @@ export class QuestionPage implements OnInit {
         let answers = [];
 
         if (this.mode == 'Edit') {
-            for (let answer of this.question.answers) {
-                answers.push(new FormControl(answer.answer, Validators.required));
+            question = this.question.question;
+            weight = this.question.weight;
+            if (this.answers.length > 0) {
+                for (let answer of this.question.answers) {
+                    answers.push(new FormControl(answer.answer, Validators.required));
+                }
             }
         }
 

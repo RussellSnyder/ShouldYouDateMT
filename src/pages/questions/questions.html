@@ -14,8 +14,21 @@
 
 
 <ion-content padding>
+  <button ion-button block (click)="loadQuestions()">Load Questions</button>
+
+  <div *ngIf="initalLoad">
+
+  <ion-list>
+    <ion-list-header text-center>
+      Questions
+    </ion-list-header>
+    <ion-item *ngFor="let question of questions; let i = index" (click)="editQuestion(i)">{{ question.question }}</ion-item>
+  </ion-list>
 
 
-  <button ion-button block (click)="addQuestion()">Add A Question</button>
+  <button ion-button block (click)="addQuestion()">Add a New Question</button>
 
+  <button ion-button block (click)="saveQuestions()">Save All Your Questions</button>
+
+  </div>
 </ion-content>

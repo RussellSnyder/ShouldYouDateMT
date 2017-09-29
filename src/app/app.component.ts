@@ -7,6 +7,7 @@ import { TabsPage } from "../pages/tabs/tabs";
 import { SigninPage } from "../pages/signin/signin";
 import { SignupPage } from "../pages/signup/signup";
 import { AuthService } from "../services/auth";
+import {QuestionsService} from "../services/questions";
 
 
 @Component({
@@ -21,7 +22,8 @@ export class MyApp {
 
   constructor(platform: Platform,
               private menuCtrl: MenuController,
-              private authService: AuthService) {
+              private authService: AuthService,
+              private questionsService: QuestionsService) {
     var config = {
       apiKey: "AIzaSyCYyExRnWo8mZP-mEaEJW0kSkgN6hyFasw",
       authDomain: "shouldyoudatemt.firebaseapp.com",
@@ -34,6 +36,7 @@ export class MyApp {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         this.isAuthenticated = true;
+
         if (user.email === "irini@irini.com") {
           this.rootPage = TabsPage;
         } else {
