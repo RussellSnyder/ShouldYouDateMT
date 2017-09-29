@@ -9,23 +9,23 @@ import {Answer} from "../../models/answer";
     templateUrl: 'question.html'
 })
 export class QuestionPage implements OnInit {
-    numberOfAnswers = [1,2,3,4];
     title: string;
     buttonText: string;
     mode: string;
     question: Question;
-    index;
+    index: number;
 
     questionForm: FormGroup;
+    answers = [];
 
 
     constructor(public navCtrl: NavController,
                 public navParams: NavParams,
                 private actionSheetController: ActionSheetController,
-    private alertController: AlertController,
-    private toastController: ToastController,
-    private questionsService: QuestionsService
-    ) {}
+                private alertController: AlertController,
+                private toastController: ToastController,
+                private questionsService: QuestionsService) {
+    }
 
     ionViewDidLoad() {
 
@@ -57,18 +57,18 @@ export class QuestionPage implements OnInit {
         }
     }
 
-    private createNewAnswerAlert() {
+    createNewAnswerAlert() {
         return this.alertController.create({
             title: 'Add Answer',
             inputs: [
                 {
                     name: 'answer',
-                    placeholder: 'answer'
+                    placeholder: 'Answer'
                 },
                 {
                     type: 'number',
                     name: 'value',
-                    placeholder: 'value'
+                    placeholder: 'Value'
                 },
                 {
                     name: 'comment',
@@ -84,8 +84,6 @@ export class QuestionPage implements OnInit {
                     text: 'Add',
                     handler: answer => {
                         if (answer.answer.trim() == '' || answer.answer == null) {
-                            console.log(answer);
-                            console.log(answer.answer);
                             const toast = this.toastController.create({
                                 message: 'You gotta enter an Answer',
                                 duration: 1500,
@@ -96,6 +94,8 @@ export class QuestionPage implements OnInit {
                         }
                         (<FormArray>this.questionForm.get('answers'))
                             .push(new FormControl(answer.answer, Validators.required));
+                        this.answers.push(answer);
+
                         const toast = this.toastController.create({
                             message: 'Answer added!',
                             duration: 1500,
@@ -108,6 +108,13 @@ export class QuestionPage implements OnInit {
         });
     };
 
+    removeAnswer(i) {
+        this.answers.splice(i, 1);
+    }
+
+    onAddAnswer() {
+        this.createNewAnswerAlert().present();
+    }
     onManageAnswers() {
         const actionSheet = this.actionSheetController.create({
             title: 'What do you want to do?',
@@ -151,11 +158,12 @@ export class QuestionPage implements OnInit {
         let answers = [];
         console.log('1', value.answers);
         if (value.answers.length > 0) {
-            answers = value.answers.map((answer: Answer) => {
+            answers = value.answers.map(answer => {
                 console.log('2', answer);
                 return {answer: answer.answer, value: answer.value, comment: answer.comment};
             });
         }
+        console.log('3', answers);
         if (this.mode == 'Edit') {
             this.questionsService.updateQuestion(this.index, value.question, value.weight, answers);
         } else {

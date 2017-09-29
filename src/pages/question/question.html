@@ -25,21 +25,34 @@
                 <ion-input type="number" min="0" max="10" formControlName="weight"></ion-input>
             </ion-item>
         </ion-list>
-        <button
+        <button *ngIf="answers.length > 0"
                 type="button"
                 clear
                 ion-button
                 block
                 (click)="onManageAnswers()">Manage Answers
         </button>
-        <ion-list formArrayName="answers">
-            <ion-item *ngFor="let answer of questionForm.get('answers').controls; let i = index">
-                <ion-label floating>Answer</ion-label>
-                {{ answer.value }}
-                <ion-input type="text" [formControlName]="i"></ion-input>
-            </ion-item>
-        </ion-list>
+        <button *ngIf="answers.length < 1"
+                type="button"
+                clear
+                ion-button
+                block
+                (click)="onAddAnswer()">Add Answer
+        </button>
 
+        <div formArrayName="answers" *ngIf="answers.length > 0">
+            <div *ngFor="let igControl of questionForm.get('answers').controls; let i = index">
+                <ion-row>
+                    <ion-col col-auto>
+                        <ion-icon id="delete-button" name="trash" item-start color="danger" (click)="removeAnswer(i)"></ion-icon>
+                    </ion-col>
+                    <ion-col>
+                        <ion-input type="text" [formControlName]="i"></ion-input>
+                    </ion-col>
+                    <ion-col>Value: {{answers[i].value}} <br> Comment: {{answers[i].comment}}</ion-col>
+                </ion-row>
+            </div>
+        </div>
 
         <button block
                 type="submit"
