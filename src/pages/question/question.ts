@@ -156,14 +156,11 @@ export class QuestionPage implements OnInit {
     onSubmit() {
         const value = this.questionForm.value;
         let answers = [];
-        console.log('1', value.answers);
         if (value.answers.length > 0) {
             answers = value.answers.map(answer => {
-                console.log('2', answer);
                 return {answer: answer.answer, value: answer.value, comment: answer.comment};
             });
         }
-        console.log('3', answers);
         if (this.mode == 'Edit') {
             this.questionsService.updateQuestion(this.index, value.question, value.weight, answers);
         } else {

@@ -16,8 +16,8 @@ export class QuestionsService {
             weight: number,
             answers: Answer[]) {
 
-    console.log(this.questions);
     this.questions.push(new Question(question, weight, answers));
+    this.storeList()
   }
 
   getQuestions() {
@@ -35,15 +35,19 @@ export class QuestionsService {
     this.questions.splice(index, 1);
   }
 
-  storeList(token: string) {
-    const userId = this.authService.getActiveUser().uid;
-    return this.http.put('https://shouldyoudatemt.firebaseio.com/questions.json?auth=' + token, this.questions)
-      .map((response: Response) => response.json());
+  storeList() {
+    if (this.authService.getActiveUser().email == "irini@irini.com") {
+      const token = this.authService.getActiveUser().getToken();
+      return this.http.put('https://shouldyoudatemt.firebaseio.com/questions.json?auth=' + token, this.questions)
+        .map((response: Response) => {
+          console.log(response.json())
+          response.json()
+        });
+    }
   }
 
   fetchList(token: string) {
-    const userId = this.authService.getActiveUser().uid;
-    return this.http.get('https://shouldyoudatemt.firebaseio.com/' + userId + '/questions.json?auth=' + token)
+    return this.http.get('https://shouldyoudatemt.firebaseio.com/questions.json?auth=' + token)
       .map((response: Response) => {
         const questions: Question[] = response.json() ? response.json() : [];
         for (let item of questions) {
