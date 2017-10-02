@@ -15,6 +15,10 @@ import {DatabaseOptionsPage} from "../pages/database-options/database-options";
 import {QuestionsPage} from "../pages/questions/questions";
 import {QuestionPage} from "../pages/question/question";
 import {QuestionsService} from "../services/questions";
+import {QuizService} from "../services/quiz";
+import {QuizPage} from "../pages/quiz/quiz";
+import {QuizQuestionPage} from "../pages/quiz-question/quiz-question";
+import {QuizCommentPage} from "../pages/quiz-comment/quiz-comment";
 
 @NgModule({
     declarations: [
@@ -29,6 +33,9 @@ import {QuestionsService} from "../services/questions";
         DatabaseOptionsPage,
         QuestionsPage,
         QuestionPage,
+        QuizPage,
+        QuizQuestionPage,
+        QuizCommentPage
     ],
     imports: [
         IonicModule.forRoot(MyApp)
@@ -46,13 +53,17 @@ import {QuestionsService} from "../services/questions";
         DatabaseOptionsPage,
         QuestionsPage,
         QuestionPage,
+        QuizPage,
+        QuizQuestionPage,
+        QuizCommentPage
     ],
     providers: [
         {provide: ErrorHandler, useClass: IonicErrorHandler},
         ShoppingListService,
         RecipesService,
         AuthService,
-        QuestionsService
+        QuestionsService,
+        QuizService
     ]
 })
 export class AppModule {

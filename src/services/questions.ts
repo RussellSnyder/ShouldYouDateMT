@@ -43,7 +43,6 @@ export class QuestionsService {
     saveList(token) {
         return this.http.put('https://shouldyoudatemt.firebaseio.com/questions.json?auth=' + token, this.questions)
             .subscribe((response: Response) => {
-                console.log(response.json());
                 this.questions = response.json();
                 return response.json();
             })

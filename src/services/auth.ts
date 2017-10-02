@@ -17,6 +17,10 @@ export class AuthService {
     return firebase.auth().currentUser;
   }
 
+  getActiveUserProfile() {
+    return this.getActiveUser();
+  }
+
   userIsAdmin() {
     return this.getActiveUser().email === "irini@irini.com";
   }

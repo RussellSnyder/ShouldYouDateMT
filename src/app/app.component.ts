@@ -6,6 +6,8 @@ import firebase from 'firebase';
 import { TabsPage } from "../pages/tabs/tabs";
 import { SigninPage } from "../pages/signin/signin";
 import { SignupPage } from "../pages/signup/signup";
+import { QuizPage } from "../pages/quiz/quiz";
+
 import { AuthService } from "../services/auth";
 import { QuestionsService } from "../services/questions";
 
@@ -37,15 +39,16 @@ export class MyApp {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
         this.isAuthenticated = true;
-        if (user.email === "irini@irini.com") {
+        console.log('is admin: ' + this.authService.userIsAdmin())
+        if (this.authService.userIsAdmin()) {
           this.rootPage = TabsPage;
         } else {
-          this.rootPage = TabsPage;
+          this.rootPage = QuizPage;
         }
 
       } else {
         this.isAuthenticated = false;
-        this.rootPage = SigninPage;
+        this.rootPage = SignupPage;
       }
     });
     platform.ready().then(() => {

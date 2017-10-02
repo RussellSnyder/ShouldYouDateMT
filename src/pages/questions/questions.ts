@@ -4,6 +4,8 @@ import {QuestionPage} from "../question/question";
 import {QuestionsService} from "../../services/questions";
 import {Question} from "../../models/question";
 import {AuthService} from "../../services/auth";
+import {QuizPage} from "../quiz/quiz";
+import {SignupPage} from "../signup/signup";
 
 @Component({
     selector: 'page-questions',
@@ -25,6 +27,14 @@ export class QuestionsPage {
                 private authService: AuthService) {
     }
 
+    ionViewWillEnter() {
+        if (!this.authService.getActiveUser()) {
+            this.navCtrl.push(SignupPage);
+        } else if (!this.authService.userIsAdmin()) {
+            this.navCtrl.push(QuizPage);
+        }
+    }
+
     ionViewDidEnter() {
         this.questionService.fetchList()
             .subscribe(() => {
@@ -41,10 +51,6 @@ export class QuestionsPage {
 
     editQuestion(i) {
         this.navCtrl.push(QuestionPage, {mode: 'Edit', index: i, question: this.questions[i]});
-    }
-
-    loadQuestions() {
-        console.log('iz loads')
     }
 
     saveQuestions() {
