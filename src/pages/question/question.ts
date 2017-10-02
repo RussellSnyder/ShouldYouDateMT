@@ -18,6 +18,7 @@ export class QuestionPage implements OnInit {
 
     questionForm: FormGroup;
     answers = [];
+    token: string;
 
 
     constructor(public navCtrl: NavController,
@@ -44,6 +45,11 @@ export class QuestionPage implements OnInit {
     }
 
     ionViewWillEnter() {
+        if (this.authService.userIsAdmin()) {
+            this.authService.getActiveUser().getToken().then(token => {
+                this.token = token
+            });
+        }
     }
 
     private getTitleText() {
@@ -171,9 +177,9 @@ export class QuestionPage implements OnInit {
         }
 
         if (this.mode == 'Edit') {
-            this.questionsService.updateQuestion(this.index, value.question, value.weight, answers);
+            this.questionsService.updateQuestion(this.token, this.index, value.question, value.weight, answers);
         } else {
-            this.questionsService.addQuestion(value.question, value.weight, answers);
+            this.questionsService.addQuestion(this.token, value.question, value.weight, answers);
         }
         this.questionForm.reset();
         this.navCtrl.pop();
@@ -200,5 +206,32 @@ export class QuestionPage implements OnInit {
             'weight': new FormControl(weight, Validators.required),
             'answers': new FormArray(answers)
         });
+    }
+
+    onDelete() {
+        let alert = this.alertController.create({
+            title: 'Really delete: ' + this.question.question + '?',
+            buttons: [
+                {
+                    text: 'Cancel',
+                    role: 'cancel'
+                },
+                {
+                    text: 'Delete',
+                    handler: () => {
+                        this.questionsService.removeQuestion(this.token, this.index);
+                        const toast = this.toastController.create({
+                            message: 'Deleted that questions....You\'re right, it was stupid...',
+                            duration: 2000,
+                            position: 'top'
+                        });
+                        toast.present();
+                        this.navCtrl.pop();
+                    }
+                }
+            ]
+        });
+        alert.present();
+
     }
 }

@@ -12,47 +12,46 @@ export class QuestionsService {
     constructor(private http: Http, private authService: AuthService) {
     }
 
-    addQuestion(question: string,
+
+    addQuestion(token: string,
+                question: string,
                 weight: number,
                 answers: Answer[]) {
-
         this.questions.push({question: question, weight: weight, answers: answers});
+        this.saveList(token);
     }
 
     getQuestions() {
         return this.questions.slice();
     }
 
-    updateQuestion(index: number,
+    updateQuestion(token: string,
+                   index: number,
                    question: string,
                    weight: number,
                    answers: Answer[]) {
 
         this.questions[index] = new Question(question, weight, answers);
+        this.saveList(token);
     }
 
-    removeQuestion(index: number) {
+    removeQuestion(token, index: number) {
         this.questions.splice(index, 1);
+        this.saveList(token)
     }
 
     saveList(token) {
-        if (this.authService.getActiveUser().email == "irini@irini.com") {
-            return this.http.delete('https://shouldyoudatemt.firebaseio.com/questions.json?auth=' + token)
-                .subscribe(() => {
-                    console.log('delete the old');
-                    console.log(this.questions);
-                    this.http.put('https://shouldyoudatemt.firebaseio.com/questions.json?auth=' + token, this.questions)
-                        .subscribe((response: Response) => {
-                            return response.json();
-                        })
-                    }
-                )
-        }
+        return this.http.put('https://shouldyoudatemt.firebaseio.com/questions.json?auth=' + token, this.questions)
+            .subscribe((response: Response) => {
+                console.log(response.json());
+                this.questions = response.json();
+                return response.json();
+            })
     }
 
-    fetchList(token: string) {
+    fetchList() {
         return this.http
-            .get('https://shouldyoudatemt.firebaseio.com/questions.json?auth=' + token)
+            .get('https://shouldyoudatemt.firebaseio.com/questions.json')
             .map((response: Response) => {
                 const questions: Question[] = response.json() ? response.json() : [];
                 for (let item of questions) {

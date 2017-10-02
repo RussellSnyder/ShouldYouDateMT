@@ -25,20 +25,6 @@
                 <ion-input type="number" min="0" max="10" formControlName="weight"></ion-input>
             </ion-item>
         </ion-list>
-        <button *ngIf="answers.length > 0"
-                type="button"
-                clear
-                ion-button
-                block
-                (click)="onManageAnswers()">Manage Answers
-        </button>
-        <button *ngIf="answers.length < 1"
-                type="button"
-                clear
-                ion-button
-                block
-                (click)="onAddAnswer()">Add Answer
-        </button>
 
         <div formArrayName="answers" *ngIf="answers.length > 0">
             <div *ngFor="let igControl of questionForm.get('answers').controls; let i = index">
@@ -54,6 +40,21 @@
             </div>
         </div>
 
+        <button *ngIf="answers.length > 0"
+                type="button"
+                ion-button
+                outline
+                block
+                (click)="onManageAnswers()">Manage Answers
+        </button>
+        <button *ngIf="answers.length < 1"
+                type="button"
+                outline
+                ion-button
+                block
+                (click)="onAddAnswer()">Add Answer
+        </button>
+
         <button block
                 type="submit"
                 ion-button
@@ -61,5 +62,15 @@
         >
             {{buttonText}}
         </button>
+        <button *ngIf="mode === 'Edit'"
+                block
+                type="button"
+                ion-button
+                color="danger"
+                (click)="onDelete()"
+        >
+            <ion-icon name="trash"></ion-icon>&nbsp;Delete
+        </button>
+
     </form>
 </ion-content>

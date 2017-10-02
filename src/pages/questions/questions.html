@@ -6,29 +6,33 @@
 -->
 <ion-header>
 
-  <ion-navbar>
-    <ion-title text-center>Questions</ion-title>
-  </ion-navbar>
+    <ion-navbar>
+        <ion-title text-center>Questions</ion-title>
+    </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
-  <button ion-button block (click)="loadQuestions()">Load Questions</button>
+    <ion-list *ngFor="let question of questions; let i = index" (click)="editQuestion(i)">
+        <ion-list-header><h3 style="display: inline-block">{{ question.question }}</h3> <ion-icon name="arrow-dropright" item-right></ion-icon></ion-list-header>
+        <ion-item *ngFor="let answer of question.answers;">- <small>{{answer.value}} - {{ answer.answer }} || {{answer.comment}}</small></ion-item>
+    </ion-list>
 
-  <div *ngIf="initalLoad">
+    <div class="totals">
+        <p>Total Questions: {{ questions.length }}</p>
+        <p>Highest Score Possible: {{highScore}}</p>
+        <p>Lowest Score Possible: {{lowScore}}</p>
+    </div>
 
-  <ion-list>
-    <ion-list-header text-center>
-      Questions
-    </ion-list-header>
-    <ion-item *ngFor="let question of questions; let i = index" (click)="editQuestion(i)">{{ question.question }}</ion-item>
-  </ion-list>
+    <ion-row>
+        <ion-col>
+            <button ion-button block color="secondary" (click)="saveQuestions()"><ion-icon name="cloud-upload"></ion-icon>&nbsp;Save Qs</button>
+        </ion-col>
+        <ion-col>
+            <button ion-button block (click)="addQuestion()"><ion-icon name="add"></ion-icon>&nbsp; Add Q</button>
+        </ion-col>
+    </ion-row>
 
 
-  <button ion-button block (click)="addQuestion()">Add a New Question</button>
-
-  <button ion-button block (click)="saveQuestions()">Save All Your Questions</button>
-
-  </div>
 </ion-content>

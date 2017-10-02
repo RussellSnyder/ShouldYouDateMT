@@ -13,7 +13,9 @@ export class QuestionsPage {
     initalLoad = false;
     loading = true;
     questions = [];
-    activeUser;
+
+    highScore;
+    lowScore;
 
     constructor(public navCtrl: NavController,
                 public navParams: NavParams,
@@ -23,9 +25,15 @@ export class QuestionsPage {
                 private authService: AuthService) {
     }
 
-    ionViewWillEnter() {
-        this.questions = this.questionService.getQuestions();
+    ionViewDidEnter() {
+        this.questionService.fetchList()
+            .subscribe(() => {
+                this.questions = this.questionService.getQuestions();
+                this.calculateHiLowScorePossibilies();
+
+        });
     }
+
 
     addQuestion() {
         this.navCtrl.push(QuestionPage, {mode: 'New'});
@@ -36,19 +44,28 @@ export class QuestionsPage {
     }
 
     loadQuestions() {
-        this.loading = true;
-        this.authService.getActiveUser().getToken().then(
-            token => {
-                this.questionService.fetchList(token).subscribe(questions => {
-                    this.questions = questions;
-                    this.initalLoad = true;
-                    this.loading = false;
-                })
-            }
-        )
+        console.log('iz loads')
     }
 
     saveQuestions() {
         this.authService.getActiveUser().getToken().then(token => this.questionService.saveList(token))
+    }
+
+    calculateHiLowScorePossibilies() {
+        let highScore = 0;
+        let lowScore = 0;
+        let answersWithValuesSorted = this.questions.map(question => {
+            return question.answers.sort((a, b) => {
+                return a.value < b.value;
+            })
+        })
+
+        answersWithValuesSorted.forEach((answers) => {
+            highScore +=  parseInt(answers[0].value);
+            lowScore +=  parseInt(answers[answers.length - 1].value);
+        })
+
+        this.highScore = highScore;
+        this.lowScore = lowScore;
     }
 }
